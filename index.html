@@ -49,6 +49,7 @@
     border-radius: 10px;
     transition: all 0.3s ease;
     margin-top: 10px;
+    cursor: pointer;
   }
 
   a.btn:hover {
@@ -61,6 +62,7 @@
     color: #ccc;
     font-size: 0.9rem;
     animation: blink 1.2s infinite;
+    display: none; 
   }
 
   @keyframes blink {
@@ -86,37 +88,52 @@
 </div>
 
 <script>
-  const container = document.getElementById('container');
-  const params = new URLSearchParams(window.location.search);
-  const ipport = params.get('ip');
+const container = document.getElementById('container');
+const params = new URLSearchParams(window.location.search);
+const ipport = params.get('ip');
 
-  if (!ipport) {
-      // IP yoksa hata mesajı ve örnek link göster
-      container.innerHTML += `
-        <p>Hata: IP:Port bulunamadı.<br>
-        Sunucuya bağlanmak için link formatı şu şekilde olmalı:</p>
-        <div class="example">
-          https://sirriusv1.github.io/rustgo/?ip=185.248.134.30:28010
-        </div>
-        <p>IP:Port kısmını kendi sunucunuzun adresi ile değiştirin.</p>
-      `;
-  } else {
-      // IP varsa otomatik yönlendirme ve buton göster
-      const steamURL = `steam://rungameid/252490//+connect ${ipport}`;
-      container.innerHTML += `
-        <p>Eğer otomatik açılmazsa aşağıdaki butona tıklayın:</p>
-        <a href="${steamURL}" class="btn">Rust Sunucusuna Bağlan</a>
-        <div class="loading">⏳ Yönlendiriliyor...</div>
-      `;
+if (!ipport) {
+    // IP yoksa hata mesajı ve örnek link göster
+    container.innerHTML += `
+      <p>Hata: IP:Port bulunamadı.<br>
+      Sunucuya bağlanmak için link formatı şu şekilde olmalı:</p>
+      <div class="example">
+        https://sirriusv1.github.io/rustgo/?ip=185.248.134.30:28010
+      </div>
+      <p>IP:Port kısmını kendi sunucunuzun adresi ile değiştirin.</p>
+    `;
+} else {
+    const steamURL = `steam://rungameid/252490//+connect ${ipport}`;
 
-      // otomatik yönlendirme
-      window.location.href = steamURL;
+    container.innerHTML += `
+      <p>Eğer otomatik açılmazsa aşağıdaki butona tıklayın:</p>
+      <a id="connectBtn" class="btn">Rust Sunucusuna Bağlan</a>
+      <div class="loading" id="loading">⏳ Yönlendiriliyor...</div>
+    `;
 
-      // 5 saniye sonra pencereyi kapatma (Steam yönlendirirse)
-      setTimeout(() => {
-          window.close();
-      }, 5000);
-  }
+    const btn = document.getElementById('connectBtn');
+    const loading = document.getElementById('loading');
+
+    // Sayfa açılır açılmaz otomatik yönlendirme
+    setTimeout(() => {
+        loading.style.display = 'block'; // ⏳ animasyonu göster
+        window.location.href = steamURL;
+
+        // 5 saniye sonra pencereyi kapatma
+        setTimeout(() => {
+            window.close();
+        }, 5000);
+    }, 500); // ufak gecikme ile kullanıcıya sayfa görünür
+
+    // Eğer kullanıcı iptal ederse butona basabilir
+    btn.addEventListener('click', () => {
+        loading.style.display = 'block';
+        window.location.href = steamURL;
+        setTimeout(() => {
+            window.close();
+        }, 5000);
+    });
+}
 </script>
 
 </body>
