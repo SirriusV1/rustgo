@@ -48,11 +48,24 @@
     background: #e63946;
     border-radius: 10px;
     transition: all 0.3s ease;
+    margin-top: 10px;
   }
 
   a.btn:hover {
     background: #f06567;
     transform: translateY(-2px);
+  }
+
+  .loading {
+    margin-top: 15px;
+    color: #ccc;
+    font-size: 0.9rem;
+    animation: blink 1.2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
   }
 
   .example {
@@ -88,12 +101,21 @@
         <p>IP:Port kısmını kendi sunucunuzun adresi ile değiştirin.</p>
       `;
   } else {
-      // IP varsa otomatik yönlendirme ve sadece buton göster
+      // IP varsa otomatik yönlendirme ve buton göster
       const steamURL = `steam://rungameid/252490//+connect ${ipport}`;
-      container.innerHTML += `<a href="${steamURL}" class="btn">Rust Sunucusuna Bağlan</a>`;
+      container.innerHTML += `
+        <p>Eğer otomatik açılmazsa aşağıdaki butona tıklayın:</p>
+        <a href="${steamURL}" class="btn">Rust Sunucusuna Bağlan</a>
+        <div class="loading">⏳ Yönlendiriliyor...</div>
+      `;
 
       // otomatik yönlendirme
       window.location.href = steamURL;
+
+      // 5 saniye sonra pencereyi kapatma (Steam yönlendirirse)
+      setTimeout(() => {
+          window.close();
+      }, 5000);
   }
 </script>
 
