@@ -25,6 +25,7 @@
     padding: 40px 30px;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    max-width: 400px;
   }
 
   h1 {
@@ -54,16 +55,14 @@
     transform: translateY(-2px);
   }
 
-  .loading {
+  .example {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    word-break: break-all;
     margin-top: 15px;
-    color: #ccc;
-    font-size: 0.9rem;
-    animation: blink 1.2s infinite;
-  }
-
-  @keyframes blink {
-    0%, 50%, 100% { opacity: 1; }
-    25%, 75% { opacity: 0; }
+    color: #ffeded;
   }
 </style>
 </head>
@@ -71,9 +70,12 @@
 
 <div class="container">
   <h1>RustGo</h1>
-  <p>Sunucuya bağlanılıyor... Eğer otomatik açılmazsa aşağıdaki butona tıklayın:</p>
-  <a id="steamLink" class="btn" href="#">Rust Sunucusuna Bağlan</a>
-  <div class="loading">⏳ Yönlendiriliyor...</div>
+  <p>Sunucu IP:Port parametresi eksik! <br>
+     Sunucuya bağlanmak için aşağıdaki örnek link formatını kullanın:</p>
+  <div class="example">
+    https://sirriusv1.github.io/rustgo/?ip=185.248.134.30:28010
+  </div>
+  <p>IP:Port kısmını kendi sunucunuzun adresi ile değiştirin.</p>
 </div>
 
 <script>
@@ -81,15 +83,9 @@
   const params = new URLSearchParams(window.location.search);
   const ipport = params.get('ip');
 
-  const steamLink = document.getElementById('steamLink');
-
-  if (!ipport) {
-      document.querySelector('.container').innerHTML = "<h2>Hata: IP:Port bulunamadı.</h2>";
-  } else {
+  if (ipport) {
+      // Eğer parametre varsa eski yönlendirme kodunu kullan
       const steamURL = `steam://rungameid/252490//+connect ${ipport}`;
-      steamLink.href = steamURL;
-
-      // otomatik yönlendirme (tarayıcı uyarısı çıkabilir)
       window.location.href = steamURL;
   }
 </script>
