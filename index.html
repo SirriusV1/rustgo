@@ -1,31 +1,96 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Rust Bağlantı Yönlendirici</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RustGo - Sunucuya Bağlan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #1b2735, #090a0f);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 25px;
+    color: #ccc;
+  }
+
+  a.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #fff;
+    background: #e63946;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  a.btn:hover {
+    background: #f06567;
+    transform: translateY(-2px);
+  }
+
+  .loading {
+    margin-top: 15px;
+    color: #ccc;
+    font-size: 0.9rem;
+    animation: blink 1.2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+  }
+</style>
 </head>
 <body>
 
-<script>
-  // URL'den IP:Port bilgisini al
-  const path = window.location.pathname.split('/').filter(Boolean);
+<div class="container">
+  <h1>RustGo</h1>
+  <p>Sunucuya bağlanılıyor... Eğer otomatik açılmazsa aşağıdaki butona tıklayın:</p>
+  <a id="steamLink" class="btn" href="#">Rust Sunucusuna Bağlan</a>
+  <div class="loading">⏳ Yönlendiriliyor...</div>
+</div>
 
-  // path[1] = ip:port olmalı
-  const ipport = path[1];
+<script>
+  // URL parametresinden IP:PORT al
+  const params = new URLSearchParams(window.location.search);
+  const ipport = params.get('ip');
+
+  const steamLink = document.getElementById('steamLink');
 
   if (!ipport) {
-      document.body.innerHTML = "<h2>Hata: IP:Port bulunamadı.</h2>";
+      document.querySelector('.container').innerHTML = "<h2>Hata: IP:Port bulunamadı.</h2>";
   } else {
       const steamURL = `steam://rungameid/252490//+connect ${ipport}`;
-      
-      // otomatik yönlendirme
-      window.location.href = steamURL;
+      steamLink.href = steamURL;
 
-      document.body.innerHTML = `
-        <h2>Rust açılıyor...</h2>
-        <p>Eğer otomatik açılmazsa aşağıya tıklayın:</p>
-        <a href="${steamURL}">${steamURL}</a>
-      `;
+      // otomatik yönlendirme (tarayıcı uyarısı çıkabilir)
+      window.location.href = steamURL;
   }
 </script>
 
