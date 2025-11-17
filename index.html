@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Rust Bağlantı Yönlendirici</title>
+</head>
+<body>
+
+<script>
+  // URL'den IP:Port bilgisini al
+  const path = window.location.pathname.split('/').filter(Boolean);
+
+  // path[1] = ip:port olmalı
+  const ipport = path[1];
+
+  if (!ipport) {
+      document.body.innerHTML = "<h2>Hata: IP:Port bulunamadı.</h2>";
+  } else {
+      const steamURL = `steam://rungameid/252490//+connect ${ipport}`;
+      
+      // otomatik yönlendirme
+      window.location.href = steamURL;
+
+      document.body.innerHTML = `
+        <h2>Rust açılıyor...</h2>
+        <p>Eğer otomatik açılmazsa aşağıya tıklayın:</p>
+        <a href="${steamURL}">${steamURL}</a>
+      `;
+  }
+</script>
+
+</body>
+</html>
