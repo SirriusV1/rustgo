@@ -2,62 +2,139 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>RustPing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RustGo - Sunucuya Bağlan</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
   body {
-    font-family: Arial, sans-serif;
-    background: #1b2735;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #1b2735, #090a0f);
     color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     text-align: center;
-    padding-top: 50px;
   }
-  #ping {
+
+  .container {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    max-width: 400px;
+  }
+
+  h1 {
     font-size: 2rem;
-    margin: 20px;
+    margin-bottom: 20px;
   }
-  #alert {
-    color: #ff4d4d;
-    font-weight: bold;
-    display: none;
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 25px;
+    color: #ccc;
+  }
+
+  a.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #fff;
+    background: #e63946;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  a.btn:hover {
+    background: #f06567;
+    transform: translateY(-2px);
+  }
+
+  .loading {
+    margin-top: 15px;
+    color: #ccc;
+    font-size: 0.9rem;
+    animation: blink 1.2s infinite;
+    display: none; 
+  }
+
+  @keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+  }
+
+  .example {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    word-break: break-all;
+    margin-top: 15px;
+    color: #ffeded;
   }
 </style>
 </head>
 <body>
-  <h1>RustPing</h1>
-  <div id="ping">Ping ölçülüyor...</div>
-  <div id="alert">⚠ Ping 100 ms üzerine çıktı!</div>
+
+<div class="container" id="container">
+  <h1>RustGo</h1>
+</div>
 
 <script>
+const container = document.getElementById('container');
 const params = new URLSearchParams(window.location.search);
-const ipport = params.get('ip') || "185.248.134.13:28010";
-const ip = ipport.split(":")[0]; // sadece IP alıyoruz
+const ipport = params.get('ip');
 
-const pingDiv = document.getElementById("ping");
-const alertDiv = document.getElementById("alert");
+if (!ipport) {
+    // IP yoksa hata mesajı ve örnek link göster
+    container.innerHTML += `
+      <p>Hata: IP:Port bulunamadı.<br>
+      Sunucuya bağlanmak için link formatı şu şekilde olmalı:</p>
+      <div class="example">
+        https://sirriusv1.github.io/rustgo/?ip=185.248.134.30:28010
+      </div>
+      <p>IP:Port kısmını kendi sunucunuzun adresi ile değiştirin.</p>
+    `;
+} else {
+    const steamURL = `steam://rungameid/252490//+connect ${ipport}`;
 
-async function measurePing() {
-  const start = performance.now();
-  try {
-    // Küçük bir fetch isteği atıyoruz
-    await fetch(`http://${ip}`, {mode: "no-cors"});
-    const end = performance.now();
-    const ping = Math.round(end - start);
+    container.innerHTML += `
+      <p>Eğer otomatik açılmazsa aşağıdaki butona tıklayın:</p>
+      <a id="connectBtn" class="btn">Rust Sunucusuna Bağlan</a>
+      <div class="loading" id="loading">⏳ Yönlendiriliyor...</div>
+    `;
 
-    pingDiv.textContent = `Ping: ${ping} ms`;
+    const btn = document.getElementById('connectBtn');
+    const loading = document.getElementById('loading');
 
-    if (ping > 100) {
-      alertDiv.style.display = "block";
-    } else {
-      alertDiv.style.display = "none";
-    }
-  } catch (e) {
-    pingDiv.textContent = "Sunucuya ulaşılamıyor ❌";
-    alertDiv.style.display = "block";
-  }
+    // Sayfa açılır açılmaz otomatik yönlendirme
+    setTimeout(() => {
+        loading.style.display = 'block'; // ⏳ animasyonu göster
+        window.location.href = steamURL;
+
+        // 5 saniye sonra pencereyi kapatma
+        setTimeout(() => {
+            window.close();
+        }, 5000);
+    }, 500); // ufak gecikme ile kullanıcıya sayfa görünür
+
+    // Eğer kullanıcı iptal ederse butona basabilir
+    btn.addEventListener('click', () => {
+        loading.style.display = 'block';
+        window.location.href = steamURL;
+        setTimeout(() => {
+            window.close();
+        }, 5000);
+    });
 }
-
-// Her saniye ölçüm yap
-setInterval(measurePing, 1000);
 </script>
+
 </body>
 </html>
